@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://ainset.in/</loc>
+    <lastmod>2021-05-31T15:40:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/categories/</loc>
+    <lastmod>2021-05-31T15:40:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/categories/ctf/</loc>
+    <lastmod>2021-05-31T15:40:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/posts/dctf_2021_just_another_heap/</loc>
+    <lastmod>2021-05-31T15:40:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/posts/</loc>
+    <lastmod>2021-05-31T15:40:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/categories/pwn/</loc>
+    <lastmod>2021-05-31T15:40:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/categories/etc/</loc>
+    <lastmod>2021-05-24T22:13:18+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/tags/hello/</loc>
+    <lastmod>2021-05-24T22:13:18+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/posts/start/</loc>
+    <lastmod>2021-05-24T22:13:18+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/tags/</loc>
+    <lastmod>2021-05-24T22:13:18+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/tags/world/</loc>
+    <lastmod>2021-05-24T22:13:18+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ainset.in/about/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>
