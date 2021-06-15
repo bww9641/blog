@@ -4,7 +4,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title type="text">Ainset.in</title>
     <subtitle type="html">Posting Hacking Write-up, Skills, etc.</subtitle>
-    <updated>2021-06-14T23:12:04&#43;09:00</updated>
+    <updated>2021-06-15T13:58:03&#43;09:00</updated>
     <id>https://ainset.in/</id>
     <link rel="alternate" type="text/html" href="https://ainset.in/" />
     <link rel="self" type="application/atom&#43;xml" href="https://ainset.in/atom.xml" />
@@ -17,10 +17,10 @@
     <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights>
     <generator uri="https://gohugo.io/" version="0.68.3">Hugo</generator>
         <entry>
-            <title type="text">thcctf pwn-rev write-up</title>
+            <title type="text">thcctf Pwn-Rev write-up</title>
             <link rel="alternate" type="text/html" href="https://ainset.in/posts/thcctf_2021_pwn_rev/" />
             <id>https://ainset.in/posts/thcctf_2021_pwn_rev/</id>
-            <updated>2021-06-14T23:11:35&#43;09:00</updated>
+            <updated>2021-06-15T13:57:48&#43;09:00</updated>
             <published>2021-06-14T22:41:00&#43;09:00</published>
             <author>
                     <name>Ainsetin</name>
@@ -470,12 +470,6 @@ b&lt;span class=&#34;s1&#34;&gt;&amp;#39;THCon21{Th1s-Was-Poss1ble-For-U}\x8c\x0
                             
                             
                             
-                                <category scheme="https://ainset.in/categories/pwn/" term="pwn" label="pwn" />
-                            
-                        
-                            
-                            
-                            
                                 <category scheme="https://ainset.in/categories/ctf/" term="ctf" label="ctf" />
                             
                         
@@ -490,7 +484,7 @@ b&lt;span class=&#34;s1&#34;&gt;&amp;#39;THCon21{Th1s-Was-Poss1ble-For-U}\x8c\x0
             <title type="text">dctf Pwn Write-up</title>
             <link rel="alternate" type="text/html" href="https://ainset.in/posts/dctf_2021_just_another_heap/" />
             <id>https://ainset.in/posts/dctf_2021_just_another_heap/</id>
-            <updated>2021-05-31T15:40:46&#43;09:00</updated>
+            <updated>2021-06-15T13:57:14&#43;09:00</updated>
             <published>2021-05-17T19:18:39&#43;09:00</published>
             <author>
                     <name>Ainsetin</name>
@@ -735,12 +729,6 @@ So, if &lt;code&gt;malloc(size)&lt;/code&gt; returns &lt;code&gt;0&lt;/code&gt;,
             
                 
                     
-                        
-                            
-                            
-                            
-                                <category scheme="https://ainset.in/categories/pwn/" term="pwn" label="pwn" />
-                            
                         
                             
                             

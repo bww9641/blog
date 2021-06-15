@@ -23,13 +23,13 @@
         
             <copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright>
         
-        <lastBuildDate>Mon, 14 Jun 2021 23:12:04 &#43;0900</lastBuildDate>
+        <lastBuildDate>Tue, 15 Jun 2021 13:58:03 &#43;0900</lastBuildDate>
         
             <atom:link rel="self" type="application/rss&#43;xml" href="https://ainset.in/rss.xml" />
         
         
             <item>
-                <title>thcctf pwn-rev write-up</title>
+                <title>thcctf Pwn-Rev write-up</title>
                 <link>https://ainset.in/posts/thcctf_2021_pwn_rev/</link>
                 <guid isPermaLink="true">https://ainset.in/posts/thcctf_2021_pwn_rev/</guid>
                 <pubDate>Mon, 14 Jun 2021 22:41:00 &#43;0900</pubDate>
@@ -478,12 +478,6 @@ b&lt;span class=&#34;s1&#34;&gt;&amp;#39;THCon21{Th1s-Was-Poss1ble-For-U}\x8c\x0
                                 
                                 
                                 
-                                    <category domain="https://ainset.in/categories/pwn/">pwn</category>
-                                
-                            
-                                
-                                
-                                
                                     <category domain="https://ainset.in/categories/ctf/">ctf</category>
                                 
                             
@@ -740,12 +734,6 @@ So, if &lt;code&gt;malloc(size)&lt;/code&gt; returns &lt;code&gt;0&lt;/code&gt;,
                 
                     
                         
-                            
-                                
-                                
-                                
-                                    <category domain="https://ainset.in/categories/pwn/">pwn</category>
-                                
                             
                                 
                                 
