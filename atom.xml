@@ -4,7 +4,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title type="text">Ainset.in</title>
     <subtitle type="html">Posting Hacking Write-up, Skills, etc.</subtitle>
-    <updated>2021-07-13T11:55:07&#43;09:00</updated>
+    <updated>2021-07-13T11:57:13&#43;09:00</updated>
     <id>https://ainset.in/</id>
     <link rel="alternate" type="text/html" href="https://ainset.in/" />
     <link rel="self" type="application/atom&#43;xml" href="https://ainset.in/atom.xml" />
@@ -20,14 +20,14 @@
             <title type="text">redpwnCTF rev-web write-up</title>
             <link rel="alternate" type="text/html" href="https://ainset.in/posts/redpwn_2021_rev_web/" />
             <id>https://ainset.in/posts/redpwn_2021_rev_web/</id>
-            <updated>2021-07-13T11:47:48&#43;09:00</updated>
+            <updated>2021-07-13T11:56:47&#43;09:00</updated>
             <published>2021-07-13T10:30:00&#43;09:00</published>
             <author>
                     <name>Ainsetin</name>
                     <uri>https://github.com/bww9641</uri>
                     <email>bww9641@naver.com</email>
                     </author>
-            <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html">Tasks  Rev  bread-making (108 pts) dimensionality (144 pts)   Web  cool (122 pts)     Rev/bread-making (Rev, 108pts) this prob has a lot of string data, so I just picked the right answer on each situation to get final flag.</summary>
+            <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html">Tasks  Rev  bread-making (108 pts) dimensionality (144 pts)   Web  cool (122 pts)     Rev/bread-making (108pts) this prob has a lot of string data, so I just picked the right answer on each situation to get final flag.</summary>
             
                 <content type="html">&lt;h3 id=&#34;tasks&#34;&gt;Tasks&lt;/h3&gt;
 &lt;ul&gt;
@@ -44,7 +44,7 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h4 id=&#34;revbread-making-rev-108pts&#34;&gt;Rev/bread-making (Rev, 108pts)&lt;/h4&gt;
+&lt;h4 id=&#34;revbread-making-108pts&#34;&gt;Rev/bread-making (108pts)&lt;/h4&gt;
 &lt;p&gt;this prob has a lot of string data, so I just picked the right answer on each situation to get final flag.&lt;/p&gt;
 &lt;p&gt;Just analyze binary and submit sentences with right sequence.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;

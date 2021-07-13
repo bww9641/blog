@@ -23,7 +23,7 @@
         
             <copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright>
         
-        <lastBuildDate>Tue, 13 Jul 2021 11:55:07 &#43;0900</lastBuildDate>
+        <lastBuildDate>Tue, 13 Jul 2021 11:57:13 &#43;0900</lastBuildDate>
         
             <atom:link rel="self" type="application/rss&#43;xml" href="https://ainset.in/rss.xml" />
         
@@ -53,7 +53,7 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h4 id=&#34;revbread-making-rev-108pts&#34;&gt;Rev/bread-making (Rev, 108pts)&lt;/h4&gt;
+&lt;h4 id=&#34;revbread-making-108pts&#34;&gt;Rev/bread-making (108pts)&lt;/h4&gt;
 &lt;p&gt;this prob has a lot of string data, so I just picked the right answer on each situation to get final flag.&lt;/p&gt;
 &lt;p&gt;Just analyze binary and submit sentences with right sequence.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
